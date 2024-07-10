@@ -1,34 +1,8 @@
 const http = require('node:http');
-const fs = require('fs');
+const routes = require('./routes.js');
 
 
-const server = http.createServer((req,res)=>{
-    // console.log("url", req.url, "method", req.method, "headers", req.headers);
-    const url = req.url; 
-    // parsing url
-    const method = req.method;
-
-    res.setHeader("Content-Type", "text/html");
-    if(url==="/"){
-        res.write("<html>");
-    res.write("<head><title>Enter Message</title></head>");
-    res.write("<body><form action='/message' method='POST'><input type='text' name='message'></input><button type='submit'>Send</button></form></body>");
-    res.write("</html>");
-    return res.end();    
-}
-if(url==="/message" && method==="POST"){
-fs.writeFileSync("message.txt", "Dummy")
-res.statusCode = 302;
-res.setHeader('Location', "/");
-return res.end()
-}
-    res.write("<html>");
-    res.write("<head><title>My first page</title></head>");
-    res.write("<body><h1>Hello, this is my first html respnse</h1></body>");
-    res.write("</html>");
-    res.end();
-    // end 이후에는 write 더 쓰면 안됨. 오류.
-});
+const server = http.createServer(routes);
 // creatServer은 requestLister를 필요함 
 // 안에 리스너 화살표 함수를 넣어준 거고, req를 console.log 하라고 함.
 //server 타입 중 listen 을 걸어주고 포트넘버를 적어주면 계속 요청을 들음
