@@ -1,12 +1,27 @@
-const http = require('node:http');
-const routes = require('./routes.js');
+const bodyParser = require('body-parser');
+const express = require('express');
+const app = express();
+
+const adminRoutes = require("./routes/admin");
+const shopRoutes = require('./routes/shop');
+
+// body-parser은 함수 끝에 이미 next()가 적혀있음 그래서 따로 안해도 됨
+app.use(bodyParser.urlencoded({extended: true}));
 
 
-const server = http.createServer(routes);
-// creatServer은 requestLister를 필요함 
-// 안에 리스너 화살표 함수를 넣어준 거고, req를 console.log 하라고 함.
-//server 타입 중 listen 을 걸어주고 포트넘버를 적어주면 계속 요청을 들음
-// run 했을 때 계속 돌아가게 되는 것임
-// 로컬에서 3000으로 한 경우라면 localhost:3000 으로 들어가겠지만, 코드스페이스에서 하는 경우라면 forwarded address 로 먹는구나  
-// https://orange-space-yodel-vj9q56qgq7qf5w9-3000.app.github.dev/ 여기 접근했을 시 서버가 바로 확인한다.
-server.listen(3000);
+// app.use(('/', req, res, next)=>{
+// 라고 되어 있으면 '/' 뿐 아니라 /로 시작하는 모든 것에 적용됨 
+// 그러니까 /abc를 쓰고 싶으면 / 위쪽에서 미들웨어 등록해줘야하는 거임
+// get, post, put etc.. 는 정확하게 '' 안의 루트와 매치돼야 함. use 만 ~로 시작하는 거임
+
+
+// 이 라우터 첫번째 아규먼트에 '/admin' 넣어주면 두번째 /admin/두번째 아규먼트 필드로 들어가게됨  
+app.use('/admin', adminRoutes);
+app.use(shopRoutes);
+app.use((req, res, next)=>{
+    res.status(404).send("<h1>Page not found</h1>")
+});
+// 에러처리
+
+
+app.listen(3000);
